@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'Account.dart';
 import 'Profile.dart';
+import 'educate_yourself.dart';
+import 'settings.dart';
 
 class HomepageScreen extends StatelessWidget {
   const HomepageScreen({Key? key}) : super(key: key);
@@ -42,6 +44,10 @@ class HomepageScreen extends StatelessWidget {
                     icon: Icons.settings,
                     onTap: () {
                       // Handle settings button tap
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SettingsScreen()),
+                      );
                     },
                   ),
                 ],
@@ -111,6 +117,12 @@ class MenuButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         // Handle individual menu item tap
+        if (label == "Educate Yourself!") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => EducationScreen()),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.transparent, // Set primary color to transparent
