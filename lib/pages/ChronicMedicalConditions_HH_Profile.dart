@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Homepage.dart';
+import 'Homepage.dart'; // Replace with your actual Homepage.dart path
 
 // Model class for a chronic medical condition
 class ChronicCondition {
@@ -32,6 +32,7 @@ class _ChronicMedicalConditionsScreenState
         symptoms: {'Shortness of Breath': true, 'Coughing': true},
       ),
     );
+    // Add more conditions as needed
   }
 
   @override
@@ -63,6 +64,29 @@ class _ChronicMedicalConditionsScreenState
         itemBuilder: (context, index) {
           return ChronicConditionCard(condition: conditions[index]);
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _addNewCondition(context);
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
+      ),
+    );
+  }
+
+  void _addNewCondition(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChronicConditionDetailScreen(
+          condition: ChronicCondition(name: '', symptoms: {}),
+          onSave: (newCondition) {
+            setState(() {
+              conditions.add(newCondition);
+            });
+          },
+        ),
       ),
     );
   }

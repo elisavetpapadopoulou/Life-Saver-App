@@ -103,7 +103,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddMedicationDialog,
         child: Icon(Icons.add),
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
       ),
     );
   }
