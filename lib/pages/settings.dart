@@ -1,7 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'Homepage.dart';
+import 'Account.dart';
+import 'account_security.dart';
+import 'TermsOfUseScreen.dart';
+import 'BluetoothScreen.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
+
+void _showLogoutDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Do you want to log out of this device?'),
+        content: Text('You will have to enter your login info again next time you log in'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+          ),
+          ElevatedButton(
+            child: Text('Log Out'),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.deepPurple, // The background color of the button
+              onPrimary: Colors.white, // The color of the text
+            ),
+            onPressed: () {
+              // Implement the logout functionality here
+              Navigator.of(context).pop(); // Close the dialog before logging out
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showDeleteAccountDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // The user must tap a button to dismiss the dialog.
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Do you want to delete your account?'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Are you sure you want to delete your account?'),
+              Text('This action is irreversible and all your data will be permanently removed from our system.'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+          ),
+          ElevatedButton(
+            child: Text('Delete Account'),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.deepPurple, 
+              onPrimary: Colors.white,
+            ),
+            onPressed: () {
+              // TODO: Implement the delete account logic
+              Navigator.of(context).pop(); // Close the dialog after handling the deletion
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _notificationsEnabled = true; // You may want to persist this state
+
+  @override
+  void initState() {
+    super.initState();
+    _checkNotificationStatus();
+  }
+
+  void _checkNotificationStatus() async {
+    // Get the current notification status from shared preferences or your backend
+  }
+
+  void _toggleNotifications(bool value) async {
+    setState(() {
+      _notificationsEnabled = value;
+    });
+
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    if (value) {
+      // Enable FCM notifications
+      await messaging.subscribeToTopic('all');
+    } else {
+      // Disable FCM notifications
+      await messaging.unsubscribeFromTopic('all');
+    }
+
+    // Here you might want to save the setting to shared preferences or your backend
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +120,7 @@ class SettingsScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop(); // Go back to the previous screen
+            Navigator.of(context).pop();
           },
         ),
         actions: [
@@ -32,18 +142,19 @@ class SettingsScreen extends StatelessWidget {
             context: context,
             tiles: [
               SwitchListTile(
-
                 title: const Text('Notifications'),
-                value: true, // Replace with a variable that holds current value
-                onChanged: (bool value) {
-                  // Update the state with new value
-                },
+                value: _notificationsEnabled,
+                onChanged: _toggleNotifications,
                 secondary: const Icon(Icons.notifications),
               ),
               ListTile(
                 title: const Text('Account'),
                 onTap: () {
                   // Navigate to Account settings screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AccountScreen()),
+                  );
                 },
                 leading: const Icon(Icons.person),
               ),
@@ -51,34 +162,40 @@ class SettingsScreen extends StatelessWidget {
                 title: const Text('Account Security'),
                 onTap: () {
                   // Navigate to Account Security settings screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AccountSecurityScreen()),
+                  );
                 },
                 leading: const Icon(Icons.security),
               ),
               ListTile(
                 title: const Text('Log Out'),
-                onTap: () {
-                  // Handle log out action
-                },
+                onTap: () => _showLogoutDialog(context),
                 leading: const Icon(Icons.exit_to_app),
               ),
               ListTile(
                 title: const Text('Delete Account'),
-                onTap: () {
-                  // Handle account deletion action
-                },
+                onTap: () => _showDeleteAccountDialog(context),
                 leading: const Icon(Icons.delete_forever),
               ),
               ListTile(
                 title: const Text('Bluetooth'),
                 onTap: () {
-                  // Navigate to Bluetooth settings screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BluetoothScreen()),
+                  );
                 },
                 leading: const Icon(Icons.bluetooth),
               ),
               ListTile(
                 title: const Text('Terms of use'),
                 onTap: () {
-                  // Show terms of use
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TermsOfUseScreen()),
+                  );
                 },
                 leading: const Icon(Icons.description),
               ),

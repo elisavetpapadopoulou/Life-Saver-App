@@ -1,7 +1,5 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
-//import 'homepage.dart'; // Import the file where HomePage is defined
+import 'articles_screen.dart';
 
 class EducationScreen extends StatelessWidget {
   @override
@@ -39,6 +37,10 @@ class EducationScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Handle recent articles action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ArticlesScreen()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white, primary: Colors.purple, // Text color
