@@ -17,14 +17,14 @@ class Condition {
   });
 }
 
-class CurrentMedicalConditionsScreen extends StatefulWidget {
+class PastMedicalConditionsScreen extends StatefulWidget {
   @override
-  _CurrentMedicalConditionsScreenState createState() =>
-      _CurrentMedicalConditionsScreenState();
+  _PastMedicalConditionsScreenState createState() =>
+      _PastMedicalConditionsScreenState();
 }
 
-class _CurrentMedicalConditionsScreenState
-    extends State<CurrentMedicalConditionsScreen> {
+class _PastMedicalConditionsScreenState
+    extends State<PastMedicalConditionsScreen> {
   List<Condition> conditions = [];
 
   @override
@@ -33,11 +33,12 @@ class _CurrentMedicalConditionsScreenState
     // Initialize your conditions list here, possibly with data from a database or API
     conditions.add(
       Condition(
-        name: 'Flu',
-        startDate: DateTime.now().subtract(Duration(days: 10)),
-        endDate: DateTime.now(),
+        name: 'Old Flu',
+        startDate: DateTime.now().subtract(Duration(days: 365)),
+        endDate: DateTime.now().subtract(Duration(days: 355)),
         symptoms: {'Fever': true, 'Cough': true, 'Fatigue': false},
       ),
+      // Add more past conditions here if needed
     );
   }
 
@@ -46,7 +47,7 @@ class _CurrentMedicalConditionsScreenState
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 255, 182, 206),
-        title: Text('Current Medical Conditions'),
+        title: Text('Past Medical Conditions'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -62,7 +63,6 @@ class _CurrentMedicalConditionsScreenState
                 ),
               );
             },
-            // Navigate to the homepage
           ),
         ],
       ),
@@ -88,70 +88,18 @@ class _CurrentMedicalConditionsScreenState
                             style: TextStyle(fontStyle: FontStyle.italic))
                         : SizedBox.shrink(),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () => _editCondition(context, index),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _addNewCondition(context);
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Color.fromARGB(255, 255, 182, 206),
-      ),
-    );
-  }
-
-  void _editCondition(BuildContext context, int index) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ConditionDetailScreen(
-          condition: conditions[index],
-          onSave: (editedCondition) {
-            setState(() {
-              conditions[index] = editedCondition;
-            });
-          },
-        ),
-      ),
-    );
-  }
-
-  void _addNewCondition(BuildContext context) {
-    final newCondition = Condition(
-      name: '',
-      startDate: DateTime.now(),
-      endDate: DateTime.now().add(Duration(days: 30)),
-      symptoms: {'Fever': false, 'Cough': false, 'Fatigue': false},
-    );
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ConditionDetailScreen(
-          condition: newCondition,
-          onSave: (addedCondition) {
-            setState(() {
-              conditions.add(addedCondition);
-            });
-          },
-        ),
-      ),
     );
   }
 }
 
+// You can reuse the ConditionDetailScreen from CurrentMedicalConditionsScreen
+// for editing the past conditions if needed.
 class ConditionDetailScreen extends StatefulWidget {
   final Condition condition;
   final Function(Condition) onSave;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'PersonalData_Profile.dart';
 import 'HealthHistory_Profile.dart';
+import 'Allergies_Profile.dart';
+import 'Medication_Profile.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -12,8 +14,18 @@ class ProfileScreen extends StatelessWidget {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child: AppBar(
-            backgroundColor: Color.fromARGB(255, 219, 143, 168),
+            backgroundColor: Color.fromARGB(255, 255, 182, 206),
             elevation: 0,
+            leading: CircleIconButton(
+              icon: Icons.person,
+              onTap: () {
+                // Handle profile button tap
+              },
+              iconColor: Colors.white,
+              backgroundColor:
+                  Color.fromARGB(255, 255, 182, 206), // Set to pink
+              size: 36.0,
+            ),
             actions: [
               IconButton(
                 icon: Icon(Icons.close),
@@ -25,218 +37,103 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         body: SingleChildScrollView(
-          child: SizedBox(
-            height: 758,
-            width: double.maxFinite,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 126,
-                      vertical: 10,
+          child: Column(
+            children: [
+              // Profile options sections
+              _buildProfileOption(
+                context,
+                icon: Icons.person,
+                headlineText: "Personal Data",
+                supportingText: "Name, Gender, Age, Blood Type",
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PersonalDataScreen(),
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey),
+                  );
+                },
+              ),
+              _buildProfileOption(
+                context,
+                icon: Icons.menu_book,
+                headlineText: "Health History",
+                supportingText:
+                    "List of current, past and chronic medical conditions",
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HealthHistoryScreen(),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        SizedBox(height: 734),
-                        Divider(),
-                      ],
+                  );
+                },
+              ),
+              _buildProfileOption(
+                context,
+                icon: Icons.bookmark,
+                headlineText: "Allergies",
+                supportingText:
+                    "Supporting line text lorem ipsum dolor sit amet, consectetur.",
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AllergiesScreen(),
                     ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: CircleIconButton(
-                      icon: Icons.person,
-                      onTap: () {
-                        // Handle profile button tap
-                      },
-                      iconColor: Colors.black,
-                      backgroundColor: Colors.white,
-                      size: 36.0,
+                  );
+                },
+              ),
+              _buildProfileOption(
+                context,
+                icon: Icons.medical_services,
+                headlineText: "Medications",
+                supportingText: "List of current medications",
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MedicationScreen(),
                     ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.grey[100],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildElevatedColumn(
-                          context,
-                          _buildColumn(
-                            context,
-                            icon: Icons.person,
-                            headlineText: "Personal Data",
-                            supportingText: "Name, Gender, Age, Blood Type",
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PersonalDataScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          () {
-                            // Navigate to PersonalDataScreen
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PersonalDataScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 47),
-                        _buildElevatedColumn(
-                          context,
-                          _buildColumn(
-                            context,
-                            icon: Icons.menu_book,
-                            headlineText: "Health History",
-                            supportingText:
-                                "List of current, past and chronic medical conditions",
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HealthHistoryScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          () {
-                            // Navigate to HealthHistoryScreen
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HealthHistoryScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 57),
-                        /*_buildElevatedColumn(
-                          context,
-                          _buildColumn(
-                            context,
-                            icon: Icons.bookmark,
-                            headlineText: "Allergies",
-                            supportingText:
-                                "Supporting line text lorem ipsum dolor sit amet, consectetur.",
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AllergiesScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          () {
-                            // Navigate to AllergiesScreen
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AllergiesScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 55),
-                        _buildElevatedColumn(
-                          context,
-                          _buildColumn(
-                            context,
-                            icon: Icons.access_time,
-                            headlineText: "Medications",
-                            supportingText: "List of current medications",
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MedicationsScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          () {
-                            // Navigate to MedicationsScreen
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MedicationsScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 55),
-                        */
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                  );
+                },
+              ),
+              Divider(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildElevatedColumn(
-      BuildContext context, Widget child, VoidCallback onTap) {
-    return Material(
-      elevation: 4,
-      child: InkWell(
-        onTap: onTap,
-        child: child,
-      ),
-    );
-  }
-
-  Widget _buildColumn(
+  Widget _buildProfileOption(
     BuildContext context, {
     required IconData icon,
     required String headlineText,
     required String supportingText,
     required VoidCallback onTap,
   }) {
-    return Padding(
-      padding: EdgeInsets.only(left: 22),
-      child: Row(
-        children: [
-          Icon(icon, size: 24),
-          Padding(
-            padding: EdgeInsets.only(left: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(headlineText, style: TextStyle(fontSize: 18)),
-                SizedBox(height: 4),
-                Text(supportingText, style: TextStyle(fontSize: 16)),
-              ],
-            ),
+    return Material(
+      elevation: 4,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
+          child: Row(
+            children: [
+              Icon(icon, size: 24),
+              SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(headlineText, style: TextStyle(fontSize: 18)),
+                  SizedBox(height: 4),
+                  Text(supportingText, style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
