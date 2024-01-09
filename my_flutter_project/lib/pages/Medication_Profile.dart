@@ -22,12 +22,14 @@ class _MedicationScreenState extends State<MedicationScreen> {
   Future<void> fetchMedications() async {
     setState(() => isLoading = true);
     try {
-      int userId =
-          Global.userId; // Replace with your method of getting the user's ID
-      medications = await _apiService.fetchUserMedications(userId);
+      int userId = Global.userId;
+      var fetchedMeds = await _apiService.fetchUserMedications(userId);
+      setState(() {
+        medications = fetchedMeds;
+        isLoading = false;
+      });
     } catch (e) {
       print('Error fetching medications: $e');
-    } finally {
       setState(() => isLoading = false);
     }
   }
@@ -57,9 +59,13 @@ class _MedicationScreenState extends State<MedicationScreen> {
               child: Text('Save'),
               onPressed: () async {
                 if (newMedication.isNotEmpty) {
-                  await _apiService.addUserMedication(
-                      Global.userId, newMedication);
-                  fetchMedications();
+                  try {
+                    await _apiService.addUserMedication(
+                        Global.userId, newMedication);
+                  } catch (e) {
+                    print('Failed to add medication: $e');
+                  }
+                  await fetchMedications();
                   Navigator.of(context).pop();
                 }
               },
@@ -71,8 +77,12 @@ class _MedicationScreenState extends State<MedicationScreen> {
   }
 
   void _removeMedication(String medication) async {
-    await _apiService.removeUserMedication(Global.userId, medication);
-    fetchMedications();
+    try {
+      await _apiService.removeUserMedication(Global.userId, medication);
+    } catch (e) {
+      print('Failed to remove medication: $e');
+    }
+    await fetchMedications();
   }
 
   @override

@@ -61,15 +61,16 @@ CREATE TABLE user_conditions (
 
 CREATE TABLE user_allergies (
   user_id INT,
-  allergy_id INT,
+  allergy_id INT AUTO_INCREMENT,
+  name VARCHAR(255), 
   FOREIGN KEY (user_id) REFERENCES user(user_id),
   PRIMARY KEY (allergy_id)
 );
 
 CREATE TABLE user_medications (
+  medication_id INT AUTO_INCREMENT,
   user_id INT,
-  medication_id INT,
   name VARCHAR(255) NOT NULL, 
   FOREIGN KEY (user_id) REFERENCES user(user_id),
-  PRIMARY KEY (user_id, medication_id) 
+  PRIMARY KEY (medication_id) 
 );

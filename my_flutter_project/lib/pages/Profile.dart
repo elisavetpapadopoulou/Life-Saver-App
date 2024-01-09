@@ -58,21 +58,6 @@ class ProfileScreen extends StatelessWidget {
               ),
               _buildProfileOption(
                 context,
-                icon: Icons.menu_book,
-                headlineText: "Health History",
-                supportingText:
-                    "List of current, past and chronic medical conditions",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HealthHistoryScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildProfileOption(
-                context,
                 icon: Icons.bookmark,
                 headlineText: "Allergies",
                 supportingText:

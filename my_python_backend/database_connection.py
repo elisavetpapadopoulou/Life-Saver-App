@@ -122,15 +122,12 @@ def get_user_medications(connection, user_id):
 
 def add_medication(connection, user_id, medication_name):
     cursor = connection.cursor()
-    # Add medication if not exists
-    cursor.execute("INSERT IGNORE INTO user_medications (name) VALUES (%s);", (medication_name,))
-    # Link medication to user
     query = """
-    INSERT INTO user_medications (user_id, medication_id)
-    SELECT %s, medication_id FROM medications WHERE name = %s;
+    INSERT INTO user_medications (user_id, name) VALUES (%s, %s);
     """
     cursor.execute(query, (user_id, medication_name))
     connection.commit()
+
 
 def remove_medication(connection, user_id, medication_name):
     cursor = connection.cursor()
@@ -138,4 +135,29 @@ def remove_medication(connection, user_id, medication_name):
     DELETE FROM user_medications WHERE user_id = %s AND name = %s;
     """
     cursor.execute(query, (user_id, medication_name))
+    connection.commit()
+
+def get_user_allergies(connection, user_id):
+    cursor = connection.cursor(dictionary=True)
+    query = """
+    SELECT name FROM user_allergies WHERE user_id = %s;
+    """
+    cursor.execute(query, (user_id,))
+    return [row["name"] for row in cursor.fetchall()]
+
+def add_allergy(connection, user_id, allergy_name):
+    cursor = connection.cursor()
+    query = """
+    INSERT INTO user_allergies (user_id, name) VALUES (%s, %s);
+    """
+    cursor.execute(query, (user_id, allergy_name))
+    connection.commit()
+
+
+def remove_allergy(connection, user_id, allergy_name):
+    cursor = connection.cursor()
+    query = """
+    DELETE FROM user_allergies WHERE user_id = %s AND name = %s;
+    """
+    cursor.execute(query, (user_id, allergy_name))
     connection.commit()

@@ -91,7 +91,7 @@ class ApiService {
 
   Future<void> addUserMedication(int userId, String medicationName) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/user/$userId/user_medications'),
+      Uri.parse('$baseUrl/api/user/$userId/medications'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -104,7 +104,7 @@ class ApiService {
 
   Future<void> removeUserMedication(int userId, String medicationName) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/api/user/$userId/user_medications'),
+      Uri.parse('$baseUrl/api/user/$userId/medications'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -112,6 +112,42 @@ class ApiService {
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to remove medication');
+    }
+  }
+
+  Future<List<String>> fetchUserAllergies(int userId) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/api/user/$userId/allergies'));
+    if (response.statusCode == 200) {
+      return List<String>.from(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load medications');
+    }
+  }
+
+  Future<void> addUserAllergy(int userId, String allergyName) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/user/$userId/allergies'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'name': allergyName}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add allergy');
+    }
+  }
+
+  Future<void> removeUserAllergy(int userId, String allergyName) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/user/$userId/allergies'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'name': allergyName}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove allergy');
     }
   }
 
