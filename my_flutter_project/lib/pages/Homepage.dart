@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Account.dart';
 import 'Profile.dart';
+import 'Emergency.dart';
 
 class HomepageScreen extends StatelessWidget {
   const HomepageScreen({
@@ -84,11 +85,10 @@ class MenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // Handle menu button tap
+        // Placeholder for other menu button actions
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color.fromARGB(
-            255, 255, 182, 206), // Set primary color to transparent
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
@@ -97,39 +97,57 @@ class MenuButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
           horizontal: 30.0,
           vertical: 20.0,
-        ), // Increased padding
+        ),
         child: Column(
           children: [
-            _buildMenuItem(context, "Emergency!", Icons.warning),
+            _buildMenuItem(
+              context,
+              "Emergency!",
+              Icons.warning,
+              () {
+                // Navigate to the EmergencyTypeScreen when "Emergency!" is tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EmergencyTypeScreen()),
+                );
+              },
+            ),
             SizedBox(height: 15),
-            _buildMenuItem(context, "Educate Yourself!", Icons.school),
+            _buildMenuItem(
+              context,
+              "Educate Yourself!",
+              Icons.school,
+              () {
+                // Placeholder for "Educate Yourself!" menu action
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, String label, IconData icon) {
+  Widget _buildMenuItem(
+      BuildContext context, String label, IconData icon, VoidCallback onTap) {
     return ElevatedButton(
-      onPressed: () {
-        // Handle individual menu item tap
-      },
+      onPressed: onTap, // Use the onTap callback passed from the caller
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent, // Set primary color to transparent
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       child: Row(
         children: [
           Icon(
             icon,
-            color: Colors.black, // Changed icon color to black
+            color: Colors.black,
           ),
           SizedBox(width: 10),
           Text(
             label,
             style: TextStyle(
-              color: Colors.black, // Changed text color to black
-              fontSize: 18.0, // Increased font size
+              color: Colors.black,
+              fontSize: 18.0,
             ),
           ),
         ],
