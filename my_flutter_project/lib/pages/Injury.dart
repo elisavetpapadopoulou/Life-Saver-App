@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'Head_Injury.dart';
 import 'Homepage.dart';
 import 'Cut.dart';
 import 'Fracture.dart';
 import 'Burn.dart';
+import 'Electroshock.dart';
 
 class InjuryTypeScreen extends StatelessWidget {
   @override
@@ -58,7 +60,6 @@ class InjuryTypeScreen extends StatelessWidget {
                   _buildListItem(context, 'Fracture'),
                   _buildListItem(context, 'Head Injury'),
                   _buildListItem(context, 'Electric Shock'),
-                  _buildListItem(context, 'Dislocation'),
                 ],
               ),
             ),
@@ -86,13 +87,12 @@ class InjuryTypeScreen extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => FractureScreen()));
             break;
           case 'Head Injury':
-            // Navigate to HeadInjuryScreen
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HeadInjuryScreen()));
             break;
           case 'Electric Shock':
-            // Navigate to ElectricShockScreen
-            break;
-          case 'Dislocation':
-            // Navigate to DislocationScreen
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ElectroshockScreen()));
             break;
           default:
             // Handle default case
