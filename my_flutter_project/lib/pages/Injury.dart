@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Homepage.dart';
 import 'Cut.dart';
+import 'Fracture.dart';
 import 'Burn.dart';
 
 class InjuryTypeScreen extends StatelessWidget {
@@ -81,7 +82,8 @@ class InjuryTypeScreen extends StatelessWidget {
                 context, MaterialPageRoute(builder: (context) => BurnScreen()));
             break;
           case 'Fracture':
-            // Navigate to FractureScreen
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => FractureScreen()));
             break;
           case 'Head Injury':
             // Navigate to HeadInjuryScreen

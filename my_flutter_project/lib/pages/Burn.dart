@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'Homepage.dart';
 import 'FirstDegree.dart';
 import 'SecondDegree.dart';
+import 'ThirdDegree.dart';
 
 class BurnScreen extends StatefulWidget {
   @override
@@ -59,7 +60,10 @@ class _BurnScreenState extends State<BurnScreen> {
             subtitle: Text(
                 'White or charred appearance, may involve all layers of skin, less pain (due to nerve damage).'),
             onTap: () {
-              // TODO: Navigate to Third Degree Burn Page
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ThirdDegreeBurnScreen()));
             },
           ),
         ],

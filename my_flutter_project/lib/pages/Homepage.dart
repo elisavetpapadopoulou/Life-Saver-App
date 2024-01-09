@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'Account.dart';
 import 'Profile.dart';
 import 'Emergency.dart';
@@ -189,48 +190,71 @@ class CircleIconButton extends StatelessWidget {
 class CallButton extends StatelessWidget {
   final IconData icon;
   final String label;
-  final Color iconColor;
 
   const CallButton({
     Key? key,
     required this.icon,
     required this.label,
-    this.iconColor = Colors.black,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        // Handle call button tap
-      },
+      onPressed: () =>
+          _makeCall(context, label), // Call the _makeCall function here
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(
-            255, 255, 182, 206), // Set the button color to pastel pink
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0), // Make the button circular
+          borderRadius: BorderRadius.circular(30.0),
         ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Take minimum vertical space
+        mainAxisSize: MainAxisSize.min,
         children: [
-          CircleIconButton(
-            icon: icon,
-            onTap: () {
-              // Handle call button tap
-            },
-            iconColor: Colors.black,
+          Icon(
+            icon,
+            color: Colors.black,
           ),
           SizedBox(height: 8.0),
           Text(
             label,
             style: TextStyle(
-              color: Colors.black, // Set text color to black
+              color: Colors.black,
               fontSize: 14.0,
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+void _makeCall(BuildContext context, String phoneNumber) async {
+  final String telScheme = 'tel:$phoneNumber';
+  if (await canLaunchUrl(Uri.parse(telScheme))) {
+    await launchUrl(Uri.parse(telScheme));
+  } else {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(
+              'Could not make the call. Please check your device settings.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                onPrimary: Colors.white,
+                primary: Color.fromARGB(255, 255, 182, 206),
+              ),
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
