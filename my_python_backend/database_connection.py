@@ -18,6 +18,7 @@ def create_server_connection(host_name, user_name, db_name, user_password=None):
                 database=db_name
             )            
         print("MySQL Database connection successful")
+
     except Error as err:
         print(f"Error: '{err}'")
 
@@ -95,3 +96,46 @@ def update_user(connection, user_id, name, surname, email, phone_number, gender,
         connection.commit()
     except Error as err:
         print(f"Error: '{err}'")
+
+def create_server_connection(host_name, user_name, db_name):
+    connection = None
+    try:
+        connection = mysql.connector.connect(
+            host=host_name,
+            user=user_name,
+            database=db_name
+            # Add 'password' if needed
+        )
+        print("MySQL Database connection successful")
+    except Exception as err:
+        print(f"Error: '{err}'")
+
+    return connection
+
+def get_user_medications(connection, user_id):
+    cursor = connection.cursor(dictionary=True)
+    query = """
+    SELECT name FROM user_medications WHERE user_id = %s;
+    """
+    cursor.execute(query, (user_id,))
+    return [row["name"] for row in cursor.fetchall()]
+
+def add_medication(connection, user_id, medication_name):
+    cursor = connection.cursor()
+    # Add medication if not exists
+    cursor.execute("INSERT IGNORE INTO user_medications (name) VALUES (%s);", (medication_name,))
+    # Link medication to user
+    query = """
+    INSERT INTO user_medications (user_id, medication_id)
+    SELECT %s, medication_id FROM medications WHERE name = %s;
+    """
+    cursor.execute(query, (user_id, medication_name))
+    connection.commit()
+
+def remove_medication(connection, user_id, medication_name):
+    cursor = connection.cursor()
+    query = """
+    DELETE FROM user_medications WHERE user_id = %s AND name = %s;
+    """
+    cursor.execute(query, (user_id, medication_name))
+    connection.commit()

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Homepage.dart';
+import '../api_service.dart'; // Ensure this path is correct
+import '../globals.dart';
 
 class MedicationScreen extends StatefulWidget {
   @override
@@ -7,13 +9,34 @@ class MedicationScreen extends StatefulWidget {
 }
 
 class _MedicationScreenState extends State<MedicationScreen> {
-  List<String> medications = ['Augmentin', 'Epilepsy Pills'];
+  List<String> medications = [];
+  bool isLoading = true;
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMedications();
+  }
+
+  Future<void> fetchMedications() async {
+    setState(() => isLoading = true);
+    try {
+      int userId =
+          Global.userId; // Replace with your method of getting the user's ID
+      medications = await _apiService.fetchUserMedications(userId);
+    } catch (e) {
+      print('Error fetching medications: $e');
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   void _showAddMedicationDialog() {
+    String newMedication = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String newMedication = '';
         return AlertDialog(
           title: Text('Add Medication'),
           content: TextField(
@@ -21,9 +44,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
               newMedication = value;
             },
             autofocus: true,
-            decoration: InputDecoration(
-              hintText: 'Medication Name',
-            ),
+            decoration: InputDecoration(hintText: 'Medication Name'),
           ),
           actions: <Widget>[
             TextButton(
@@ -34,11 +55,11 @@ class _MedicationScreenState extends State<MedicationScreen> {
             ),
             TextButton(
               child: Text('Save'),
-              onPressed: () {
+              onPressed: () async {
                 if (newMedication.isNotEmpty) {
-                  setState(() {
-                    medications.add(newMedication);
-                  });
+                  await _apiService.addUserMedication(
+                      Global.userId, newMedication);
+                  fetchMedications();
                   Navigator.of(context).pop();
                 }
               },
@@ -49,57 +70,45 @@ class _MedicationScreenState extends State<MedicationScreen> {
     );
   }
 
-  void _removeMedication(String medication) {
-    setState(() {
-      medications.remove(medication);
-    });
+  void _removeMedication(String medication) async {
+    await _apiService.removeUserMedication(Global.userId, medication);
+    fetchMedications();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.medical_services,
-                color: Colors.white), // Your chosen icon
-            SizedBox(width: 8), // For spacing
-            Text(
-              'Medication',
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
+        title: Text('Medication', style: TextStyle(color: Colors.white)),
         backgroundColor: Color.fromARGB(255, 255, 182, 206),
-        iconTheme: IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             icon: Icon(Icons.close),
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => HomepageScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => HomepageScreen()),
               );
             },
           ),
         ],
       ),
-      body: ListView.separated(
-        itemCount: medications.length,
-        separatorBuilder: (context, index) => Divider(),
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(medications[index]),
-            trailing: TextButton(
-              child: Text('Remove', style: TextStyle(color: Colors.black)),
-              onPressed: () => _removeMedication(medications[index]),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.separated(
+              itemCount: medications.length,
+              separatorBuilder: (context, index) => Divider(),
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(medications[index]),
+                  trailing: TextButton(
+                    child:
+                        Text('Remove', style: TextStyle(color: Colors.black)),
+                    onPressed: () => _removeMedication(medications[index]),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddMedicationDialog,
         child: Icon(Icons.add),

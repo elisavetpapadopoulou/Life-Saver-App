@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lifesaver/api_service.dart'; // Ensure this is the correct path
+import 'dart:convert';
 import 'Homepage.dart'; // Replace with the correct path to your Homepage screen
+import '../globals.dart';
 
 class PersonalDataScreen extends StatefulWidget {
   const PersonalDataScreen({Key? key}) : super(key: key);
@@ -10,15 +13,22 @@ class PersonalDataScreen extends StatefulWidget {
 
 class _PersonalDataScreenState extends State<PersonalDataScreen> {
   bool isEditing = false;
+  final ApiService _apiService = ApiService(); // ApiService instance
 
-  // Placeholder values for personal data
-  String fullName = "John Doe";
-  String gender = "Male";
-  String age = "56";
-  String bloodType = "O";
-  String bloodRhFactor = "+";
+  // Personal data fields
+  String initialPassword = '';
+  String initialName = '';
+  String initialSurname = '';
+  String initialEmail = '';
+  String initialPhoneNumber = '';
+  String initialGender = '';
+  int initialAge = 0;
+  String initialBloodType = '';
+  String initialBloodRhFactor = '';
+  int initialPoints = 0;
 
-  late TextEditingController fullNameController;
+  late TextEditingController nameController;
+  late TextEditingController surnameController;
   late TextEditingController genderController;
   late TextEditingController ageController;
   late TextEditingController bloodTypeController;
@@ -27,15 +37,79 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
   @override
   void initState() {
     super.initState();
-    fullNameController = TextEditingController(text: fullName);
-    genderController = TextEditingController(text: gender);
-    ageController = TextEditingController(text: age);
-    bloodTypeController = TextEditingController(text: bloodType);
-    bloodRhFactorController = TextEditingController(text: bloodRhFactor);
+    nameController = TextEditingController();
+    surnameController = TextEditingController();
+    genderController = TextEditingController();
+    ageController = TextEditingController();
+    bloodTypeController = TextEditingController();
+    bloodRhFactorController = TextEditingController();
+    _fetchPersonalData();
+  }
+
+  void _fetchPersonalData() async {
+    final userId = Global.userId;
+    final response = await _apiService.getUserProfile(userId);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        initialPassword = data['password'] ?? '';
+        initialName = data['name'] ?? '';
+        initialSurname = data['surname'] ?? '';
+        initialEmail = data['email'] ?? '';
+        initialPhoneNumber = data['phone_number'] ?? '';
+        initialGender = data['gender'] ?? '';
+        initialAge = data['age'] ?? 0;
+        initialBloodType = data['blood_type'] ?? '';
+        initialBloodRhFactor = data['rh_factor'] ?? '';
+        initialPoints = data['points'] ?? '';
+
+        nameController.text = initialName;
+        surnameController.text = initialSurname;
+        genderController.text = initialGender;
+        ageController.text = initialAge.toString();
+        bloodTypeController.text = initialBloodType;
+        bloodRhFactorController.text = initialBloodRhFactor;
+      });
+    } else {
+      // Handle errors more gracefully here
+      print('Failed to load user data. Status code: ${response.statusCode}');
+    }
+  }
+
+  void _onSavePressed() async {
+    final updateData = {
+      'name': nameController.text,
+      'surname': surnameController.text,
+      'email': initialEmail,
+      'phone_number': initialPhoneNumber,
+      'gender': genderController.text,
+      'age': int.tryParse(ageController.text) ?? 0,
+      'blood_type': bloodTypeController.text, // Changed from bloodType
+      'rh_factor': bloodRhFactorController.text, // Changed from bloodRhFactor
+      'points': initialPoints
+    };
+
+    final response =
+        await _apiService.updateUserProfile(Global.userId, updateData);
+
+    if (response.statusCode == 200) {
+      // Refresh data after saving
+      _fetchPersonalData();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile updated successfully')),
+      );
+    } else {
+      // Handle errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile')),
+      );
+    }
+    setState(() => isEditing = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    // The build method with your UI code
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -48,14 +122,12 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
           actions: [
             IconButton(
               icon: Icon(Icons.close),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomepageScreen(),
-                  ),
-                );
-              },
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomepageScreen(),
+                ),
+              ),
             ),
           ],
         ),
@@ -65,20 +137,24 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               isEditing
-                  ? _buildEditableField("Full Name", fullNameController)
-                  : _buildDisplayField("Full Name", fullName),
+                  ? _buildEditableField("Name", nameController)
+                  : _buildDisplayField("Name", nameController.text),
               isEditing
-                  ? _buildGenderDropdown()
-                  : _buildDisplayField("Gender", gender),
+                  ? _buildEditableField("Surname", surnameController)
+                  : _buildDisplayField("Surname", surnameController.text),
+              isEditing
+                  ? _buildEditableField("Gender", genderController)
+                  : _buildDisplayField("Gender", genderController.text),
               isEditing
                   ? _buildEditableField("Age", ageController)
-                  : _buildDisplayField("Age", age),
+                  : _buildDisplayField("Age", ageController.text),
               isEditing
-                  ? _buildBloodTypeDropdown()
-                  : _buildDisplayField("Blood Type", bloodType),
+                  ? _buildEditableField("Blood Type", bloodTypeController)
+                  : _buildDisplayField("Blood Type", bloodTypeController.text),
               isEditing
-                  ? _buildBloodRhFactorDropdown()
-                  : _buildDisplayField("Rh Factor", bloodRhFactor),
+                  ? _buildEditableField("Rh Factor", bloodRhFactorController)
+                  : _buildDisplayField(
+                      "Rh Factor", bloodRhFactorController.text),
               isEditing ? _buildEditingButtons() : _buildEditButton(),
             ],
           ),
@@ -112,64 +188,6 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
     );
   }
 
-  Widget _buildGenderDropdown() {
-    return _buildDropdownField(
-      "Gender",
-      genderController,
-      ['Male', 'Female'],
-      (String? newValue) {
-        genderController.text = newValue ?? '';
-      },
-    );
-  }
-
-  Widget _buildBloodTypeDropdown() {
-    return _buildDropdownField(
-      "Blood Type",
-      bloodTypeController,
-      ['O', 'A', 'B', 'AB'],
-      (String? newValue) {
-        bloodTypeController.text = newValue ?? '';
-      },
-    );
-  }
-
-  Widget _buildBloodRhFactorDropdown() {
-    return _buildDropdownField(
-      "Rh Factor",
-      bloodRhFactorController,
-      ['+', '-'],
-      (String? newValue) {
-        bloodRhFactorController.text = newValue ?? '';
-      },
-    );
-  }
-
-  Widget _buildDropdownField(
-    String label,
-    TextEditingController controller,
-    List<String> items,
-    ValueChanged<String?> onChanged,
-  ) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0),
-      child: DropdownButtonFormField<String>(
-        value: controller.text,
-        onChanged: onChanged,
-        items: items.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
-        ),
-      ),
-    );
-  }
-
   Widget _buildEditingButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -177,8 +195,8 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
         ElevatedButton(
           onPressed: _onCancelPressed,
           style: ElevatedButton.styleFrom(
-            primary: Colors.grey,
-            onPrimary: Colors.white,
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.grey,
             padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
           ),
           child: Text('Cancel'),
@@ -186,8 +204,8 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
         ElevatedButton(
           onPressed: _onSavePressed,
           style: ElevatedButton.styleFrom(
-            primary: Color.fromARGB(255, 255, 182, 206),
-            onPrimary: Colors.white,
+            foregroundColor: Colors.white,
+            backgroundColor: Color.fromARGB(255, 255, 182, 206),
             padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
           ),
           child: Text('Save'),
@@ -196,12 +214,26 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
     );
   }
 
+  void _onCancelPressed() {
+    setState(() {
+      isEditing = false;
+      nameController.text = initialName;
+      surnameController.text = initialSurname;
+      genderController.text = initialGender;
+      ageController.text = initialAge.toString();
+      bloodTypeController.text = initialBloodType;
+      bloodRhFactorController.text =
+          initialBloodRhFactor; // Reset the fields to the initial values
+      _fetchPersonalData(); // Refresh data to original
+    });
+  }
+
   Widget _buildEditButton() {
     return ElevatedButton(
       onPressed: _onEditPressed,
       style: ElevatedButton.styleFrom(
-        primary: Color.fromARGB(255, 255, 182, 206),
-        onPrimary: Colors.white,
+        foregroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
         padding: EdgeInsets.symmetric(vertical: 16.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -217,30 +249,6 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
   void _onEditPressed() {
     setState(() {
       isEditing = true;
-    });
-  }
-
-  void _onCancelPressed() {
-    setState(() {
-      isEditing = false;
-      // Reset the fields to the initial values
-      fullNameController.text = fullName;
-      genderController.text = gender;
-      ageController.text = age;
-      bloodTypeController.text = bloodType;
-      bloodRhFactorController.text = bloodRhFactor;
-    });
-  }
-
-  void _onSavePressed() {
-    setState(() {
-      isEditing = false;
-      // Save changes and update the original values
-      fullName = fullNameController.text;
-      gender = genderController.text;
-      age = ageController.text;
-      bloodType = bloodTypeController.text;
-      bloodRhFactor = bloodRhFactorController.text;
     });
   }
 }

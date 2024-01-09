@@ -3,7 +3,9 @@ import 'Account.dart';
 import 'Profile.dart';
 
 class HomepageScreen extends StatelessWidget {
-  const HomepageScreen({Key? key}) : super(key: key);
+  const HomepageScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

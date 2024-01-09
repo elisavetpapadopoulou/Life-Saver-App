@@ -37,7 +37,7 @@ class ApiService {
   }
 
   // Login
-  Future<http.Response> login(String email, String password) async {
+  Future<int?> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/login'),
       headers: <String, String>{
@@ -48,7 +48,14 @@ class ApiService {
         'password': password,
       }),
     );
-    return response;
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      final user = responseData['user'];
+      return user[
+          'user_id']; // Replace 'user_id' with the actual key used in your API response for the user ID
+    }
+    return null; // Return null or handle the error as needed
   }
 
   // Get User Profile
@@ -70,6 +77,42 @@ class ApiService {
       body: jsonEncode(updateData),
     );
     return response;
+  }
+
+  Future<List<String>> fetchUserMedications(int userId) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/api/user/$userId/medications'));
+    if (response.statusCode == 200) {
+      return List<String>.from(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load medications');
+    }
+  }
+
+  Future<void> addUserMedication(int userId, String medicationName) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/user/$userId/user_medications'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'name': medicationName}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add medication');
+    }
+  }
+
+  Future<void> removeUserMedication(int userId, String medicationName) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/user/$userId/user_medications'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'name': medicationName}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove medication');
+    }
   }
 
   // Additional methods can be added here as needed

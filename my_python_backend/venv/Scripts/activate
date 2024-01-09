@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\elisa\flutterapps\real_lifesaver\my_python_backend\venv"
+VIRTUAL_ENV="C:\Users\elisa\flutterapps\real_lifesaver\lifesaver\my_python_backend\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

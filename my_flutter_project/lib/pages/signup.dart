@@ -1,6 +1,9 @@
 import 'package:lifesaver/pages/Homepage.dart';
 import '../api_service.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../globals.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -13,10 +16,25 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
-  final TextEditingController _bloodController = TextEditingController();
-  final TextEditingController _rhController = TextEditingController();
+
+  final List<String> _genders = [
+    'Male',
+    'Female',
+    'Other'
+  ]; // Add gender options
+  final List<String> _bloodTypes = [
+    'A',
+    'B',
+    'AB',
+    'O'
+  ]; // Add blood type options
+  final List<String> _rhFactors = ['+', '-']; // Add rh factor options
+
+  String _selectedGender = 'Male'; // Default value
+  String _selectedBloodType = 'A'; // Default value
+  String _selectedRhFactor = '+'; // Default value
+
   bool _agreeToTerms = false;
   bool _isLoading = false;
 
@@ -26,7 +44,10 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign Up')),
+      appBar: AppBar(
+        title: Text('Sign Up'),
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -41,7 +62,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   decoration: InputDecoration(labelText: 'Surname')),
               TextField(
                   controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Password')),
+                  decoration: InputDecoration(labelText: 'Password'),
+                  obscureText: true), // Hide password input),
               TextField(
                   controller: _emailController,
                   decoration: InputDecoration(labelText: 'Email')),
@@ -51,15 +73,51 @@ class _SignupScreenState extends State<SignupScreen> {
               TextField(
                   controller: _ageController,
                   decoration: InputDecoration(labelText: 'Age')),
-              TextField(
-                  controller: _genderController,
-                  decoration: InputDecoration(labelText: 'Gender')),
-              TextField(
-                  controller: _bloodController,
-                  decoration: InputDecoration(labelText: 'Blood Type')),
-              TextField(
-                  controller: _rhController,
-                  decoration: InputDecoration(labelText: 'Rh factor')),
+              DropdownButtonFormField(
+                value: _selectedGender,
+                items: _genders.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedGender = newValue!;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Gender'),
+              ),
+              DropdownButtonFormField(
+                value: _selectedBloodType,
+                items: _bloodTypes.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedBloodType = newValue!;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Blood Type'),
+              ),
+              DropdownButtonFormField(
+                value: _selectedRhFactor,
+                items: _rhFactors.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedRhFactor = newValue!;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Rh Factor'),
+              ),
               CheckboxListTile(
                 value: _agreeToTerms,
                 onChanged: (newValue) {
@@ -102,15 +160,14 @@ class _SignupScreenState extends State<SignupScreen> {
             _passwordController
                 .text, // Consider hashing the password in production
             _phoneController.text,
-            _genderController.text,
+            _selectedGender,
             age,
-            _bloodController.text,
-            _rhController.text
-
-            // Additional parameters like 'gender', 'age' go here
-            );
+            _selectedBloodType,
+            _selectedRhFactor);
 
         if (response.statusCode == 200 || response.statusCode == 201) {
+          final responseData = json.decode(response.body);
+          Global.userId = responseData['user_id'];
           // Navigate to the home page on successful signup
           Navigator.pushReplacement(
             context,

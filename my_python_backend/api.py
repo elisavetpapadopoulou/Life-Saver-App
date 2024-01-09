@@ -1,9 +1,8 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import database_connection as db_conn
 
 app = Flask(__name__)
-CORS(app)
+
 # MySQL server details
 MYSQL_HOST = "localhost"
 MYSQL_USER = "root"
@@ -49,6 +48,31 @@ def update_user_profile(user_id):
     db_conn.update_user(connection, user_id, **update_data)
     connection.close()
     return jsonify({"message": "User updated successfully"}), 200
+
+
+@app.route('/api/user/<int:user_id>/medications', methods=['GET'])
+def get_user_medications(user_id):
+    connection = db_conn.create_server_connection(MYSQL_HOST, MYSQL_USER, MYSQL_DB)
+    medications = db_conn.get_user_medications(connection, user_id)  # Implement this function in db_conn
+    connection.close()
+    return jsonify(medications), 200
+
+@app.route('/api/user/<int:user_id>/medications', methods=['POST'])
+def add_user_medication(user_id):
+    medication = request.get_json()
+    connection = db_conn.create_server_connection(MYSQL_HOST, MYSQL_USER, MYSQL_DB)
+    result = db_conn.add_medication(connection, user_id, medication['name'])  # Implement this function in db_conn
+    connection.close()
+    return jsonify({"message": "Medication added successfully"}) if result else jsonify({"message": "Failed to add medication"}), 200 if result else 500
+
+
+@app.route('/api/user/<int:user_id>/medications', methods=['DELETE'])
+def remove_user_medication(user_id):
+    medication = request.get_json()
+    connection = db_conn.create_server_connection(MYSQL_HOST, MYSQL_USER, MYSQL_DB)
+    result = db_conn.remove_medication(connection, user_id, medication['name'])  # Implement this function in db_conn
+    connection.close()
+    return jsonify({"message": "Medication removed successfully"}) if result else jsonify({"message": "Failed to remove medication"}), 200 if result else 500
 
 if __name__ == '__main__':
     app.run(debug=True)

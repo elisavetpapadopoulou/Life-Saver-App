@@ -5,7 +5,9 @@ import 'Allergies_Profile.dart';
 import 'Medication_Profile.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -107,13 +109,12 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileOption(
-  BuildContext context, {
-  required IconData icon,
-  required String headlineText,
-  required String supportingText,
-  required VoidCallback onTap,
-  }) 
-  {
+    BuildContext context, {
+    required IconData icon,
+    required String headlineText,
+    required String supportingText,
+    required VoidCallback onTap,
+  }) {
     return Material(
       elevation: 4,
       child: InkWell(
@@ -121,11 +122,13 @@ class ProfileScreen extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start, // Align items to start at the top
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Align items to start at the top
             children: [
               Icon(icon, size: 24),
               SizedBox(width: 16),
-              Expanded( // Wrap the column with Expanded
+              Expanded(
+                // Wrap the column with Expanded
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -133,14 +136,16 @@ class ProfileScreen extends StatelessWidget {
                       headlineText,
                       style: TextStyle(fontSize: 18),
                       maxLines: 2, // Allow text to span up to two lines
-                      overflow: TextOverflow.ellipsis, // Show ellipsis at the end if text overflows
+                      overflow: TextOverflow
+                          .ellipsis, // Show ellipsis at the end if text overflows
                     ),
                     SizedBox(height: 4),
                     Text(
                       supportingText,
                       style: TextStyle(fontSize: 16),
                       maxLines: 3, // Allow text to span up to three lines
-                      overflow: TextOverflow.ellipsis, // Show ellipsis at the end if text overflows
+                      overflow: TextOverflow
+                          .ellipsis, // Show ellipsis at the end if text overflows
                     ),
                   ],
                 ),
@@ -151,7 +156,6 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class CircleIconButton extends StatelessWidget {
