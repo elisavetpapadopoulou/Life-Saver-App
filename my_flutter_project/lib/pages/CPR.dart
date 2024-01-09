@@ -45,9 +45,9 @@ class CPRHandPlacementScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                  'Follow the gif with your hands formed in the way of the pictures above.'),
+                  'Follow the photo with your hands formed in the way of the pictures above.'),
               // Placeholder for gif
-              // Image.asset('assets/hand_placement.gif'), // Replace with your asset gif
+              Image.asset('pictures/cpr.png'), // Replace with your asset gif
             ],
           ),
         ),

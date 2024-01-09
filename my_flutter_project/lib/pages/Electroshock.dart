@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Homepage.dart';
+import 'Pictures.dart';
+import 'CPR.dart';
 
 class ElectroshockScreen extends StatelessWidget {
   @override
@@ -42,7 +44,8 @@ class ElectroshockScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HomepageScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => CPRHandPlacementScreen()),
                   );
                 },
                 child: Text('Press for instructions'),
