@@ -1,416 +1,264 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // For date formatting
+import 'Homepage.dart';
 
-class HealthHistoryCurrentScreen extends StatelessWidget {
-  const HealthHistoryCurrentScreen({Key? key}) : super(key: key);
+// Model class for a medical condition
+class Condition {
+  String name;
+  DateTime startDate;
+  DateTime endDate;
+  Map<String, bool> symptoms;
+
+  Condition({
+    required this.name,
+    required this.startDate,
+    required this.endDate,
+    required this.symptoms,
+  });
+}
+
+class CurrentMedicalConditionsScreen extends StatefulWidget {
+  @override
+  _CurrentMedicalConditionsScreenState createState() =>
+      _CurrentMedicalConditionsScreenState();
+}
+
+class _CurrentMedicalConditionsScreenState
+    extends State<CurrentMedicalConditionsScreen> {
+  List<Condition> conditions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize your conditions list here, possibly with data from a database or API
+    conditions.add(
+      Condition(
+        name: 'Flu',
+        startDate: DateTime.now().subtract(Duration(days: 10)),
+        endDate: DateTime.now(),
+        symptoms: {'Fever': true, 'Cough': true, 'Fatigue': false},
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: SizedBox(
-              height: 758.0,
-              width: double.maxFinite,
-              child: Stack(
-                alignment: Alignment.center,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
+        title: Text('Current Medical Conditions'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomepageScreen(),
+                ),
+              );
+            },
+            // Navigate to the homepage
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: conditions.length,
+        itemBuilder: (context, index) {
+          Condition condition = conditions[index];
+          return Card(
+            margin: EdgeInsets.all(8.0),
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 126.0,
-                        vertical: 10.0,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizedBox(height: 734.0),
-                          Divider(),
-                        ],
-                      ),
-                    ),
+                  Text('• ${condition.name}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                      '  ${DateFormat.yMMMd().format(condition.startDate)} - ${DateFormat.yMMMd().format(condition.endDate)}'),
+                  ...condition.symptoms.keys.map(
+                    (symptom) => condition.symptoms[symptom]!
+                        ? Text('  • $symptom',
+                            style: TextStyle(fontStyle: FontStyle.italic))
+                        : SizedBox.shrink(),
                   ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 24.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                        color: Colors.grey[100],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () => _editCondition(context, index),
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildAppBar(context),
-                          SizedBox(height: 8.0),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 20.0,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.0),
-                              color: Colors.grey[100],
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildEditRow1(context),
-                                SizedBox(height: 24.0),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 12.0),
-                                  child: _buildStateLayerRow1(
-                                    context,
-                                    chillsLabel: "Fever",
-                                  ),
-                                ),
-                                SizedBox(height: 32.0),
-                                _buildMedicalConditionRow(
-                                  context,
-                                  "Head Ache",
-                                  Icons.favorite, // Different icon
-                                ),
-                                SizedBox(height: 32.0),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 12.0),
-                                  child: _buildStateLayerRow1(
-                                    context,
-                                    chillsLabel: "Chills",
-                                  ),
-                                ),
-                                SizedBox(height: 17.0),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Divider(
-                                    color: Colors.blueGrey[100],
-                                    indent: 12.0,
-                                    endIndent: 12.0,
-                                  ),
-                                ),
-                                SizedBox(height: 14.0),
-                                _buildEditRow2(context),
-                                SizedBox(height: 17.0),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 12.0),
-                                  child: _buildStateLayerRow1(
-                                    context,
-                                    chillsLabel: "Fever",
-                                  ),
-                                ),
-                                SizedBox(height: 32.0),
-                                _buildMedicalConditionRow(
-                                  context,
-                                  "Dizziness",
-                                  Icons.access_time, // Different icon
-                                ),
-                                SizedBox(height: 32.0),
-                                _buildMedicalConditionRow(
-                                  context,
-                                  "Stomach Ache",
-                                  Icons.star, // Different icon
-                                ),
-                                SizedBox(height: 17.0),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Divider(
-                                    color: Colors.blueGrey[100],
-                                    indent: 12.0,
-                                    endIndent: 12.0,
-                                  ),
-                                ),
-                                SizedBox(height: 34.0),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 92.0),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Handle Add button press
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.black,
-                              padding: EdgeInsets.symmetric(
-                                vertical: 16.0,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(right: 8.0),
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Color.fromARGB(255, 255, 182, 206),
-                                  ),
-                                ),
-                                Text(
-                                  'Add',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    color: Color.fromARGB(255, 255, 182, 206),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 14.0),
-                        ],
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor:
-          const Color.fromARGB(255, 180, 89, 119), // Set the desired color here
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Colors.black), // Set color here
-        onPressed: () {
-          Navigator.pop(context);
+          );
         },
       ),
-      title: Row(
-        children: [
-          Icon(Icons.person, color: Colors.black), // Set color here
-          SizedBox(width: 13.0),
-          Text("Current Medical Conditions"),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _addNewCondition(context);
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
       ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.close, color: Colors.black), // Set color here
-          onPressed: () {
-            Navigator.pop(context);
+    );
+  }
+
+  void _editCondition(BuildContext context, int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConditionDetailScreen(
+          condition: conditions[index],
+          onSave: (editedCondition) {
+            setState(() {
+              conditions[index] = editedCondition;
+            });
           },
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildEditRow1(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 11.0),
-            child: Text("Condition 1"),
+  void _addNewCondition(BuildContext context) {
+    final newCondition = Condition(
+      name: '',
+      startDate: DateTime.now(),
+      endDate: DateTime.now().add(Duration(days: 30)),
+      symptoms: {'Fever': false, 'Cough': false, 'Fatigue': false},
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConditionDetailScreen(
+          condition: newCondition,
+          onSave: (addedCondition) {
+            setState(() {
+              conditions.add(addedCondition);
+            });
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class ConditionDetailScreen extends StatefulWidget {
+  final Condition condition;
+  final Function(Condition) onSave;
+
+  ConditionDetailScreen(
+      {Key? key, required this.condition, required this.onSave})
+      : super(key: key);
+
+  @override
+  _ConditionDetailScreenState createState() => _ConditionDetailScreenState();
+}
+
+class _ConditionDetailScreenState extends State<ConditionDetailScreen> {
+  late TextEditingController _nameController;
+  late DateTime _startDate;
+  late DateTime _endDate;
+  late Map<String, bool> _symptoms;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.condition.name);
+    _startDate = widget.condition.startDate;
+    _endDate = widget.condition.endDate;
+    _symptoms = Map.from(widget.condition.symptoms);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
+        title: Text('Edit Condition'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.check),
+            onPressed: _saveCondition,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 40.0,
-                width: 40.0,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 34.0,
-                        width: 40.0,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.deepPurple[500]!.withOpacity(0.08),
-                            width: 1.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle Edit button press
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        padding: EdgeInsets.all(8.0),
-                        shape: CircleBorder(),
-                      ),
-                      child: Icon(
-                        Icons.edit,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle Edit button press
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white,
-                  padding: EdgeInsets.all(8.0),
-                  shape: CircleBorder(),
-                ),
-                child: Text(
-                  'Edit',
-                  style: TextStyle(fontSize: 12.0, color: Colors.black),
-                ),
-              ),
-            ],
+          IconButton(
+            icon: Icon(Icons.cancel),
+            onPressed: () => Navigator.pop(context),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildEditRow2(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 12.0, right: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 4.0, bottom: 18.0),
-            child: Text("Condition 2"),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 40.0,
-                width: 40.0,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 34.0,
-                        width: 40.0,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.deepPurple[500]!.withOpacity(0.08),
-                            width: 1.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle Edit button press
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        padding: EdgeInsets.all(8.0),
-                        shape: CircleBorder(),
-                      ),
-                      child: Icon(
-                        Icons.edit,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle Edit button press
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Condition Name'),
+            ),
+            _buildDateField('Start Date', _startDate,
+                (pickedDate) => setState(() => _startDate = pickedDate)),
+            _buildDateField('End Date', _endDate,
+                (pickedDate) => setState(() => _endDate = pickedDate)),
+            Divider(),
+            Text('Symptoms:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ..._symptoms.keys.map(
+              (symptom) => CheckboxListTile(
+                value: _symptoms[symptom],
+                title: Text(symptom),
+                onChanged: (bool? value) {
+                  setState(() {
+                    _symptoms[symptom] = value ?? false;
+                  });
                 },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white,
-                  padding: EdgeInsets.all(8.0),
-                  shape: CircleBorder(),
-                ),
-                child: Text(
-                  'Edit',
-                  style: TextStyle(fontSize: 12.0, color: Colors.black),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStateLayerRow1(BuildContext context,
-      {required String chillsLabel}) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.circle,
-            color: Colors.deepPurple[500],
-            size: 24.0,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 12.0, top: 3.0, bottom: 3.0),
-            child: Text(
-              chillsLabel,
-              style: TextStyle(
-                fontSize: 16.0,
-                color: Colors.deepPurple[500],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildMedicalConditionRow(
-    BuildContext context,
-    String conditionName,
-    IconData iconData,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(left: 12.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            iconData,
-            color: Colors.black,
-            size: 24.0,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 12.0, top: 3.0, bottom: 3.0),
-            child: Text(
-              conditionName,
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
+  Widget _buildDateField(
+      String label, DateTime date, ValueChanged<DateTime> onDateChanged) {
+    return ListTile(
+      title: Text('$label: ${DateFormat.yMMMd().format(date)}'),
+      trailing: Icon(Icons.calendar_today),
+      onTap: () async {
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: date,
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2101),
+        );
+        if (picked != null && picked != date) {
+          onDateChanged(picked);
+        }
+      },
     );
   }
 
-  void onTapArrowLeft(BuildContext context) {
+  void _saveCondition() {
+    final editedCondition = Condition(
+      name: _nameController.text,
+      startDate: _startDate,
+      endDate: _endDate,
+      symptoms: _symptoms,
+    );
+    widget.onSave(editedCondition);
     Navigator.pop(context);
+
+    // TODO: Add database saving logic here
+    // This is where you would typically make a call to your backend service or database
+    // to save the edited or new condition.
   }
 }
