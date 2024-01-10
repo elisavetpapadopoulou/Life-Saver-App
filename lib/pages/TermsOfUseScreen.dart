@@ -16,8 +16,10 @@ class TermsOfUseScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
+        backgroundColor: const Color.fromARGB(255, 255, 182, 206),
       ),
       body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(), // Ensure it's always scrollable
         padding: EdgeInsets.all(16.0),
         child: Text(
           'Welcome to LifeSaver: Your Emergency Medical Companion! Before using our services, '
@@ -48,4 +50,5 @@ class TermsOfUseScreen extends StatelessWidget {
     );
   }
 }
+
 

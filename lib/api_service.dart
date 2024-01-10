@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../globals.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -78,6 +79,21 @@ class ApiService {
     return response;
   }
 
+  Future<void> deleteAccount(int userId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/user/$userId'), 
+    );
+
+    if (response.statusCode == 200) {
+      // Account deleted successfully
+      // You may want to clear user data and navigate to a login screen or perform other actions
+    } else {
+      // Handle errors and show feedback to the user
+      print('Failed to delete account. Status code: ${response.statusCode}');
+    }
+  }
+
+
     // Change User Password
   Future<http.Response> changePassword(int userId, String oldPassword, String newPassword) async {
     final response = await http.put(
@@ -91,6 +107,28 @@ class ApiService {
       }),
     );
     return response;
+  }
+
+  Future<int> fetchUserPoints(int userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/api/user/$userId/points'));
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final points = jsonData['points']; // Replace 'points' with your API response key
+      return points;
+    }
+    return 0; // Return 0 if there's an error
+  }
+
+  Future<String> fetchUserBadge(int userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/api/user/$userId/badge'));
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final badgeName = jsonData['badge']; // Replace 'badge' with your API response key
+      return badgeName;
+    }
+    return 'No Badge'; // Return 'No Badge' if there's an error
   }
 
   Future<List<String>> fetchUserMedications(int userId) async {
@@ -165,5 +203,65 @@ class ApiService {
     }
   }
 
-  // Additional methods can be added here as needed
+  Future<List<Article>> fetchAllArticles() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/articles'), // Replace with your API endpoint
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = json.decode(response.body);
+      final List<Article> loadedArticles = [];
+
+      jsonData.forEach((articleData) {
+        loadedArticles.add(Article.fromJson(articleData));
+      });
+
+      return loadedArticles;
+    } else {
+      throw Exception('Failed to load articles');
+    }
+  }
+
+  Future<bool> finishArticle(int userId, int articleId) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/articles/$articleId/finish'),
+      body: json.encode({'user_id': userId}),
+      headers: {'Content-Type': 'application/json'},
+    );
+    return response.statusCode == 200;
+  }
+
+  Future<List<Article>> fetchReadArticles(int userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/api/read-articles/$userId'));
+    if (response.statusCode == 200) {
+      List<dynamic> articlesJson = json.decode(response.body);
+      return articlesJson.map((json) => Article.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load read articles. Status code: ${response.statusCode}');
+    }
+  }
 }
+
+class Article {
+  final int articleId;
+  final String title;
+  final String content;
+  final String datePublished;
+
+  Article({
+    required this.articleId,
+    required this.title,
+    required this.content,
+    required this.datePublished,
+  });
+
+  factory Article.fromJson(Map<String, dynamic> json) {
+    return Article(
+      articleId: json['article_id'],
+      title: json['title'],
+      content: json['content'],
+      datePublished: json['date_published'],
+    );
+  }
+}
+

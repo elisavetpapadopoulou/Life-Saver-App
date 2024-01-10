@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'Account.dart';
 import 'Profile.dart';
 import 'Emergency.dart';
 import 'settings.dart';
+import 'educate_yourself.dart';
 
 class HomepageScreen extends StatelessWidget {
   const HomepageScreen({
@@ -125,6 +125,11 @@ class MenuButton extends StatelessWidget {
               Icons.school,
               () {
                 // Placeholder for "Educate Yourself!" menu action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EducateYourselfScreen()),
+                );
               },
             ),
           ],

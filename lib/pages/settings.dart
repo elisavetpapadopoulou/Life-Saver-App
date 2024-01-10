@@ -1,30 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 import 'Homepage.dart';
 import 'Welcome.dart';
 import 'Account.dart';
 import 'account_security.dart';
 import 'TermsOfUseScreen.dart';
 import 'BluetoothScreen.dart';
+import '../globals.dart';
+import 'package:lifesaver/api_service.dart';
 
 
 class SettingsScreen extends StatefulWidget {
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
-}
-
-
-
-Future<void> _logout(BuildContext context) async {
-  try {
-/////////////////////////////////////////////
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => WelcomeScreen()),
-    );
-  } catch (error) {
-    print('Logout error: $error');
-  }
 }
 
 void _showLogoutDialog(BuildContext context) {
@@ -47,7 +35,12 @@ void _showLogoutDialog(BuildContext context) {
               primary: Colors.deepPurple, // The background color of the button
               onPrimary: Colors.white, // The color of the text
             ),
-            onPressed: () => _logout(context),
+            onPressed: () {
+              Global.clearUserId();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => WelcomeScreen()),
+              );
+            }
           ),
         ],
       );
@@ -84,8 +77,13 @@ void _showDeleteAccountDialog(BuildContext context) {
               onPrimary: Colors.white,
             ),
             onPressed: () {
-              // TODO: Implement the delete account logic
-              Navigator.of(context).pop(); // Close the dialog after handling the deletion
+              final userId = Global.userId;
+              final ApiService _apiService = ApiService();
+              _apiService.deleteAccount(userId);
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => WelcomeScreen()),
+              );
+             // Navigator.of(context).pop(true);// Close the dialog after handling the deletion
             },
           ),
         ],
