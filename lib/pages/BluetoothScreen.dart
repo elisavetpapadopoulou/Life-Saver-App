@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BluetoothScreen extends StatefulWidget {
   @override
@@ -7,27 +7,40 @@ class BluetoothScreen extends StatefulWidget {
 }
 
 class _BluetoothScreenState extends State<BluetoothScreen> {
-  bool _bluetoothEnabled = false;
+  bool _isBluetoothOn = false;
 
   @override
   void initState() {
     super.initState();
-    _getBluetoothState();
+    _listenToBluetoothState();
   }
 
-  void _getBluetoothState() async {
-    _bluetoothEnabled = await FlutterBluetoothSerial.instance.isEnabled;
-    setState(() {});
+  void _listenToBluetoothState() {
+    FlutterBluePlus.state.listen((state) {
+      if (state == BluetoothState.on) {
+        setState(() {
+          _isBluetoothOn = true;
+        });
+      } else {
+        setState(() {
+          _isBluetoothOn = false;
+        });
+      }
+    });
   }
 
   void _toggleBluetooth(bool value) async {
     if (value) {
-      await FlutterBluetoothSerial.instance.requestEnable();
+      await FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+      setState(() {
+        _isBluetoothOn = true;
+      });
     } else {
-      await FlutterBluetoothSerial.instance.requestDisable();
+      await FlutterBluePlus.stopScan();
+      setState(() {
+        _isBluetoothOn = false;
+      });
     }
-
-    _getBluetoothState();
   }
 
   @override
@@ -44,13 +57,21 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            SwitchListTile(
+            ListTile(
               title: Text('Bluetooth'),
-              subtitle: Text('Track other devices'),
-              value: _bluetoothEnabled,
-              onChanged: _toggleBluetooth,
-              secondary: Icon(Icons.bluetooth),
+              leading: Icon(Icons.bluetooth),
+              trailing: Switch(
+                value: _isBluetoothOn,
+                onChanged: (value) {
+                  _toggleBluetooth(value);
+                },
+              ),
             ),
+            Padding(
+              padding: EdgeInsets.only(top: 16.0),
+              child: Text('Track other devices'),
+            ),
+            // ... Additional Bluetooth options here ...
           ],
         ),
       ),

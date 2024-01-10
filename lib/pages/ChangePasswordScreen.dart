@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Homepage.dart';
+import 'package:lifesaver/api_service.dart'; // Import your ApiService
+import '../globals.dart'; // Import global variables if needed
 
 class ChangePasswordScreen extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
+  final ApiService _apiService = ApiService(); // ApiService instance
 
   @override
   void dispose() {
@@ -17,12 +20,32 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     super.dispose();
   }
 
-  void _changePassword() {
-    // Implement the logic to change the password
-    // This usually involves validating the old password against your backend
-    // and then updating to the new password if the old password is correct
-    // Finally, give the user feedback about the password change (success or failure)
-    Navigator.pop(context); // This would typically happen after a successful password change
+  void _changePassword() async {
+    String oldPassword = _oldPasswordController.text;
+    String newPassword = _newPasswordController.text;
+
+    // Check if the new password is different from the old password
+    if (oldPassword == newPassword) {
+      _showSnackBar("New password cannot be the same as the old password.");
+      return;
+    }
+
+    // Call your API service to change the password
+    final response = await _apiService.changePassword(
+        Global.userId, oldPassword, newPassword);
+
+    if (response.statusCode == 200) {
+      _showSnackBar("Password changed successfully.");
+      Navigator.pop(context);
+    } else {
+      _showSnackBar("Failed to change password. Error: ${response.statusCode}");
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   void _cancel() {
@@ -98,3 +121,4 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
   }
 }
+

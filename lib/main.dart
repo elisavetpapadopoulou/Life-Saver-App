@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:lifesaver/pages/Welcome.dart';
 import 'pages/Homepage.dart'; // Import your newly created file
+import 'pages/Signup.dart';
+import 'dart:io';
 
 void main() {
   runApp(MyApp());
@@ -9,8 +11,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomepageScreen(),
+    return MaterialApp(
+      home: WelcomeScreen(),
     );
   }
 }

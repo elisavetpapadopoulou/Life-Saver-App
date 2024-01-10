@@ -1,266 +1,242 @@
 import 'package:flutter/material.dart';
 import 'Homepage.dart';
+import 'package:lifesaver/api_service.dart'; // Ensure this is the correct path
+import 'dart:convert';
+import '../globals.dart';
+
 
 class AccountScreen extends StatefulWidget {
+  const AccountScreen({Key? key}) : super(key: key);
+
   @override
   _AccountScreenState createState() => _AccountScreenState();
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  TextEditingController nameController =
-      TextEditingController(text: "Anastasia");
-  TextEditingController surnameController =
-      TextEditingController(text: "Collins");
-  TextEditingController emailController =
-      TextEditingController(text: "anastasia_collins@gmail.com");
-  TextEditingController phoneNumberController =
-      TextEditingController(text: "123-456-7890");
-  TextEditingController originalNameController =
-      TextEditingController(text: "Anastasia");
-  TextEditingController originalSurnameController =
-      TextEditingController(text: "Collins");
-  TextEditingController originalEmailController =
-      TextEditingController(text: "anastasia_collins@gmail.com");
-  TextEditingController originalPhoneNumberController =
-      TextEditingController(text: "123-456-7890");
   bool isEditing = false;
+  final ApiService _apiService = ApiService(); // ApiService instance
+
+  // Personal data fields
+  String initialPassword = '';
+  String initialName = '';
+  String initialSurname = '';
+  String initialEmail = '';
+  String initialPhoneNumber = '';
+  String initialGender = '';
+  int initialAge = 0;
+  String initialBloodType = '';
+  String initialBloodRhFactor = '';
+  int initialPoints = 0;
+
+  late TextEditingController nameController;
+  late TextEditingController surnameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
+
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    surnameController = TextEditingController();
+    emailController = TextEditingController();
+    phoneController = TextEditingController();
+    _fetchAccount();
+  }
+
+  void _fetchAccount() async {
+    final userId = Global.userId;
+    final response = await _apiService.getUserProfile(userId);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        initialPassword = data['password'] ?? '';
+        initialName = data['name'] ?? '';
+        initialSurname = data['surname'] ?? '';
+        initialEmail = data['email'] ?? '';
+        initialPhoneNumber = data['phone_number'] ?? '';
+        initialGender = data['gender'] ?? '';
+        initialAge = data['age'] ?? 0;
+        initialBloodType = data['blood_type'] ?? '';
+        initialBloodRhFactor = data['rh_factor'] ?? '';
+        initialPoints = data['points'] ?? '';
+
+        nameController.text = initialName;
+        surnameController.text = initialSurname;
+        emailController.text = initialEmail;
+        phoneController.text = initialPhoneNumber;
+      });
+    } else {
+      // Handle errors more gracefully here
+      print('Failed to load user data. Status code: ${response.statusCode}');
+    }
+  }
+
+  void _onSavePressed() async {
+    final updateData = {
+      'name': nameController.text,
+      'surname': surnameController.text,
+      'email': emailController.text,
+      'phone_number': phoneController.text,
+      'gender': initialGender,
+      'age': initialAge,
+      'blood_type': initialBloodType,
+      'rh_factor': initialBloodRhFactor,
+      'points': initialPoints
+    };
+
+
+    final response =
+        await _apiService.updateUserProfile(Global.userId, updateData);
+
+    if (response.statusCode == 200) {
+      // Refresh data after saving
+      _fetchAccount();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile updated successfully')),
+      );
+    } else {
+      // Handle errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile')),
+      );
+    }
+    setState(() => isEditing = false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Form(
-          child: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 24,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildArrowLeftRow(context),
-                    SizedBox(height: 65),
-                    _buildStateLayerColumn(
-                      context,
-                      icon: Icons.person,
-                      headlineText: "Name",
-                      controller: nameController,
-                    ),
-                    SizedBox(height: 65),
-                    _buildStateLayerColumn(
-                      context,
-                      icon: Icons.lock,
-                      headlineText: "Surname",
-                      controller: surnameController,
-                    ),
-                    SizedBox(height: 65),
-                    _buildStateLayerColumn(
-                      context,
-                      icon: Icons.email,
-                      headlineText: "Email",
-                      controller: emailController,
-                    ),
-                    SizedBox(height: 65),
-                    _buildStateLayerColumn(
-                      context,
-                      icon: Icons.phone,
-                      headlineText: "Phone number",
-                      controller: phoneNumberController,
-                    ),
-                    SizedBox(height: 19),
-                    if (isEditing)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              // Save logic here
-                              setState(() {
-                                isEditing = false;
-                                // Add logic to save changes
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                'Save',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Cancel editing logic here
-                              setState(() {
-                                isEditing = false;
-                                // Restore original values
-                                nameController.text =
-                                    originalNameController.text;
-                                surnameController.text =
-                                    originalSurnameController.text;
-                                emailController.text =
-                                    originalEmailController.text;
-                                phoneNumberController.text =
-                                    originalPhoneNumberController.text;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 182, 206),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    if (!isEditing) SizedBox(height: 10),
-                    if (!isEditing) // Add this condition to show the button only when not editing
-                      ElevatedButton(
-                        onPressed: () {
-                          // Toggle between edit and display mode
-                          setState(() {
-                            isEditing = !isEditing;
-                            // Store original values when entering editing mode
-                            originalNameController.text = nameController.text;
-                            originalSurnameController.text =
-                                surnameController.text;
-                            originalEmailController.text = emailController.text;
-                            originalPhoneNumberController.text =
-                                phoneNumberController.text;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            isEditing ? 'Save' : 'Edit',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    SizedBox(height: 10),
-                  ],
+        appBar: AppBar(
+          backgroundColor: Color.fromARGB(255, 255, 182, 206),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text('Account'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomepageScreen(),
                 ),
               ),
             ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Replace _buildEditableField and _buildDisplayField with fields from AccountScreen
+              isEditing
+                  ? _buildEditableField("Name", nameController)
+                  : _buildDisplayField("Name", nameController.text),
+              isEditing
+                  ? _buildEditableField("Surname", surnameController)
+                  : _buildDisplayField("Surname", surnameController.text),
+              isEditing
+                  ? _buildEditableField("Email", emailController)
+                  : _buildDisplayField("Email", emailController.text),
+              isEditing
+                  ? _buildEditableField("Phone Number", phoneController)
+                  : _buildDisplayField("Phone Number", phoneController.text),
+              isEditing ? _buildEditingButtons() : _buildEditButton(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildArrowLeftRow(BuildContext context) {
+  Widget _buildEditableField(String label, TextEditingController controller) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDisplayField(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16.0),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(label, style: TextStyle(color: Colors.black54)),
+        subtitle:
+            Text(value, style: TextStyle(fontSize: 16, color: Colors.black)),
+      ),
+    );
+  }
+
+  Widget _buildEditingButtons() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        Icon(Icons.lock, size: 24),
-        const Padding(
-          padding: EdgeInsets.only(left: 13, top: 13, bottom: 3),
-          child: Text(
-            "Account",
-            style: TextStyle(fontSize: 18),
+        ElevatedButton(
+          onPressed: _onCancelPressed,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.grey,
+            padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
           ),
+          child: Text('Cancel'),
         ),
-        Spacer(),
-        IconButton(
-          icon: Icon(Icons.close, size: 24),
-          onPressed: () {
-            // Navigate to the homepage when the close button is pressed
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomepageScreen()),
-            );
-          },
+        ElevatedButton(
+          onPressed: _onSavePressed,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Color.fromARGB(255, 255, 182, 206),
+            padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+          ),
+          child: Text('Save'),
         ),
       ],
     );
   }
 
-  Widget _buildStateLayerColumn(BuildContext context,
-      {required IconData icon,
-      required String headlineText,
-      required TextEditingController controller}) {
-    return Container(
-      width: double.maxFinite,
-      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 255, 182, 206),
+  void _onCancelPressed() {
+    setState(() {
+      isEditing = false;
+      nameController.text = initialName;
+      surnameController.text = initialSurname;
+      emailController.text = initialEmail;
+      phoneController.text = initialPhoneNumber;
+      // Reset the fields to the initial values
+      _fetchAccount(); // Refresh data to original
+    });
+  }
+
+  Widget _buildEditButton() {
+    return ElevatedButton(
+      onPressed: _onEditPressed,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 255, 182, 206),
+        padding: EdgeInsets.symmetric(vertical: 16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                color: Colors.black,
-              ),
-              SizedBox(width: 10),
-              Text(
-                headlineText,
-                style: TextStyle(fontSize: 18, color: Colors.black),
-              ),
-            ],
-          ),
-          SizedBox(height: 4),
-          isEditing
-              ? TextFormField(
-                  controller: controller,
-                  decoration: InputDecoration(
-                    labelText: headlineText,
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.next,
-                )
-              : Text(
-                  controller.text,
-                  style: TextStyle(fontSize: 16, color: Colors.black),
-                ),
-        ],
+      child: Text(
+        'Edit',
+        style: TextStyle(fontSize: 18.0),
       ),
     );
+  }
+
+  void _onEditPressed() {
+    setState(() {
+      isEditing = true;
+    });
   }
 }
