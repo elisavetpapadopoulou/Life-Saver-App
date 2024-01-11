@@ -15,11 +15,6 @@ CREATE TABLE user(
   points INT DEFAULT 0
 );
 
-CREATE TABLE symptoms (
-symptom_id INT AUTO_INCREMENT PRIMARY KEY, 
-name VARCHAR(255) UNIQUE NOT NULL
-);
-
 CREATE TABLE badges (
 badge_id INT AUTO_INCREMENT PRIMARY KEY,
 name VARCHAR(255) UNIQUE NOT NULL
@@ -49,16 +44,6 @@ CREATE TABLE user_articles (
   PRIMARY KEY (user_id, article_id)
 );
 
-CREATE TABLE user_conditions (
-  user_id INT,
-  condition_id INT,
-  status ENUM('current', 'past', 'chronic') NOT NULL,
-  date_diagnosed DATE,
-  date_resolved DATE,
-  FOREIGN KEY (user_id) REFERENCES user(user_id),
-  PRIMARY KEY (condition_id, status)
-);
-
 CREATE TABLE user_allergies (
   user_id INT,
   allergy_id INT AUTO_INCREMENT,
@@ -74,3 +59,11 @@ CREATE TABLE user_medications (
   FOREIGN KEY (user_id) REFERENCES user(user_id),
   PRIMARY KEY (medication_id) 
 );
+
+INSERT INTO user(password, name, surname, email, phone_number, gender, age, blood_type, rh_factor) VALUES('password', 'John', 'Doe', 'johndoe@mail.com', '123456789', 'Male', 45, 'A', '+');
+
+INSERT INTO user_allergies(user_id, name) VALUES(3, 'cats');
+INSERT INTO user_allergies(user_id, name) VALUES(3, 'bees');
+
+INSERT INTO user_medications(user_id, name) VALUES(3, 'depon');
+INSERT INTO user_medications(user_id, name) VALUES(3, 'augmentin');
