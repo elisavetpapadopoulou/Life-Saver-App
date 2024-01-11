@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'Profile.dart';
-import 'Emergency.dart';
-import 'settings.dart';
-import 'educate_yourself.dart';
+
+//import 'Profile.dart';
+import 'emergency.dart';
 
 class HomepageScreen extends StatelessWidget {
-  const HomepageScreen({
-    Key? key,
-  }) : super(key: key);
+  const HomepageScreen({Key? key}) : super(key: key);
+  static const String routeName = '/HomepageScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +14,7 @@ class HomepageScreen extends StatelessWidget {
         body: Column(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -24,15 +22,11 @@ class HomepageScreen extends StatelessWidget {
                     icon: Icons.person,
                     onTap: () {
                       // Navigate to profile page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileScreen()),
-                      );
+                      
                     },
                   ),
                   Transform.translate(
-                    offset: Offset(0.0,
+                    offset: const Offset(0.0,
                         35.0), // Adjust the second parameter (20.0) for vertical translation
                     child: Text(
                       'Life Saver',
@@ -46,10 +40,6 @@ class HomepageScreen extends StatelessWidget {
                     icon: Icons.settings,
                     onTap: () {
                       // Handle settings button tap
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SettingsScreen()),
-                      );
                     },
                   ),
                 ],
@@ -59,9 +49,9 @@ class HomepageScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 40.0), // Adjusted space
-                  MenuButton(),
-                  SizedBox(height: 40.0), // Adjusted space
+                  const SizedBox(height: 40.0), // Adjusted space
+                  const MenuButton(),
+                  const SizedBox(height: 40.0), // Adjusted space
                   Text(
                     'Your daily health tip!',
                     style: Theme.of(context).textTheme.titleMedium,
@@ -69,7 +59,7 @@ class HomepageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 CallButton(icon: Icons.phone, label: '100'),
@@ -86,14 +76,16 @@ class HomepageScreen extends StatelessWidget {
 }
 
 class MenuButton extends StatelessWidget {
+  const MenuButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // Placeholder for other menu button actions
+        // This button's function is not specified. Add functionality if needed.
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color.fromARGB(255, 255, 182, 206),
+        backgroundColor: const Color.fromARGB(255, 255, 182, 206), // Set primary color to the pink color
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
@@ -102,62 +94,44 @@ class MenuButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
           horizontal: 30.0,
           vertical: 20.0,
-        ),
+        ), // Increased padding
         child: Column(
           children: [
-            _buildMenuItem(
-              context,
-              "Emergency!",
-              Icons.warning,
-              () {
-                // Navigate to the EmergencyTypeScreen when "Emergency!" is tapped
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EmergencyTypeScreen()),
-                );
-              },
-            ),
-            SizedBox(height: 15),
-            _buildMenuItem(
-              context,
-              "Educate Yourself!",
-              Icons.school,
-              () {
-                // Placeholder for "Educate Yourself!" menu action
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EducateYourselfScreen()),
-                );
-              },
-            ),
+            _buildMenuItem(context, "Emergency!", Icons.warning, () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EmergencyPage()),
+              );
+            }),
+            const SizedBox(height: 15),
+            _buildMenuItem(context, "Educate Yourself!", Icons.school, () {
+              // Add navigation for "Educate Yourself!" when ready
+            }),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMenuItem(
-      BuildContext context, String label, IconData icon, VoidCallback onTap) {
+  Widget _buildMenuItem(BuildContext context, String label, IconData icon, VoidCallback onPressed) {
     return ElevatedButton(
-      onPressed: onTap, // Use the onTap callback passed from the caller
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent, // Set primary color to transparent
         elevation: 0,
       ),
       child: Row(
         children: [
           Icon(
             icon,
-            color: Colors.black,
+            color: Colors.black, // Changed icon color to black
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text(
             label,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18.0,
+            style: const TextStyle(
+              color: Colors.black, // Changed text color to black
+              fontSize: 18.0, // Increased font size
             ),
           ),
         ],
@@ -165,6 +139,7 @@ class MenuButton extends StatelessWidget {
     );
   }
 }
+
 
 class CircleIconButton extends StatelessWidget {
   final IconData icon;
@@ -181,7 +156,7 @@ class CircleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Ink(
-      decoration: ShapeDecoration(
+      decoration: const ShapeDecoration(
         color: Color.fromARGB(255, 255, 182, 206),
         shape: CircleBorder(),
       ),
@@ -212,7 +187,10 @@ class CallButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // Handle call button tap
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>  const EmergencyPage())
+        );
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(
@@ -231,10 +209,10 @@ class CallButton extends StatelessWidget {
             },
             iconColor: Colors.black,
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black, // Set text color to black
               fontSize: 14.0,
             ),
