@@ -96,7 +96,16 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-  assets:
+assets:
     - pictures/pressure_points.png
     - pictures/tourniquet.png
+    - pictures/adult_hands.png
+    - pictures/cpr.png
+    - pictures/blocked.png
+    - pictures/breaths.png
+    - pictures/child_hands.png
+    - pictures/hand_placement.png
+    - pictures/infant_hands.png
+    - pictures/injector.png
+    - pictures/recovery.png
     
