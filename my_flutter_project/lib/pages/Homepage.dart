@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'Account.dart';
 import 'Profile.dart';
 import 'Emergency.dart';
+import 'settings.dart';
+import 'educate_yourself.dart';
 
 class HomepageScreen extends StatelessWidget {
   const HomepageScreen({
@@ -46,6 +46,10 @@ class HomepageScreen extends StatelessWidget {
                     icon: Icons.settings,
                     onTap: () {
                       // Handle settings button tap
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SettingsScreen()),
+                      );
                     },
                   ),
                 ],
@@ -120,7 +124,11 @@ class MenuButton extends StatelessWidget {
               "Educate Yourself!",
               Icons.school,
               () {
-                // Placeholder for "Educate Yourself!" menu action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EducateYourselfScreen()),
+                );
               },
             ),
           ],
