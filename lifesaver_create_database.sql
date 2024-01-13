@@ -31,52 +31,29 @@ CREATE TABLE read_articles (
   FOREIGN KEY (article_id) REFERENCES articles(article_id)
 );
 
-CREATE TABLE medical_conditions (
-  condition_id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  description TEXT
-);
-
-CREATE TABLE user_conditions (
-  user_id INT,
-  condition_id INT,
-  status ENUM('current', 'past', 'chronic') NOT NULL,
-  date_diagnosed DATE,
-  date_resolved DATE,
-  FOREIGN KEY (user_id) REFERENCES user(user_id),
-  FOREIGN KEY (condition_id) REFERENCES medical_conditions(condition_id),
-  PRIMARY KEY (user_id, condition_id, status)
-);
-
-CREATE TABLE allergies (
-  allergy_id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
-);
-
 CREATE TABLE user_allergies (
   user_id INT,
-  allergy_id INT,
+  allergy_id INT AUTO_INCREMENT,
+  name VARCHAR(255), 
   FOREIGN KEY (user_id) REFERENCES user(user_id),
-  FOREIGN KEY (allergy_id) REFERENCES allergies(allergy_id),
-  PRIMARY KEY (user_id, allergy_id)
-);
-
-CREATE TABLE medications (
-  medication_id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  dosage TEXT
+  PRIMARY KEY (allergy_id)
 );
 
 CREATE TABLE user_medications (
+  medication_id INT AUTO_INCREMENT,
   user_id INT,
-  medication_id INT,
-  dosage TEXT,
-  start_date DATE,
-  end_date DATE,
+  name VARCHAR(255) NOT NULL, 
   FOREIGN KEY (user_id) REFERENCES user(user_id),
-  FOREIGN KEY (medication_id) REFERENCES medications(medication_id),
-  PRIMARY KEY (user_id, medication_id, start_date) 
+  PRIMARY KEY (medication_id) 
 );
+
+INSERT INTO user(password, name, surname, email, phone_number, gender, age, blood_type, rh_factor) VALUES('password', 'John', 'Doe', 'johndoe@mail.com', '123456789', 'Male', 45, 'A', '+');
+
+INSERT INTO user_allergies(user_id, name) VALUES(3, 'cats');
+INSERT INTO user_allergies(user_id, name) VALUES(3, 'bees');
+
+INSERT INTO user_medications(user_id, name) VALUES(3, 'depon');
+INSERT INTO user_medications(user_id, name) VALUES(3, 'augmentin');
 
 
 -- Article 1: Immediate Response: How to Perform Hands-Only CPR
