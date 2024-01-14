@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lifesaver/pages/Homepage.dart';
 import 'Injury.dart';
+import 'medical.dart';
+import 'allergic_reaction.dart';
 
 class EmergencyTypeScreen extends StatelessWidget {
   @override
@@ -57,7 +59,10 @@ class EmergencyTypeScreen extends StatelessWidget {
                   ListTile(
                     title: Text('Medical (e.g., heart attack)'),
                     onTap: () {
-                      //
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MedicalPage()),
+                      );
                     },
                   ),
                   ListTile(
@@ -73,7 +78,11 @@ class EmergencyTypeScreen extends StatelessWidget {
                   ListTile(
                     title: Text('Allergic reaction'),
                     onTap: () {
-                      // Handle Allergic reaction selection
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AllergicReactionPage()),
+                      );
                     },
                   ),
                 ],

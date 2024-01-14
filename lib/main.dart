@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lifesaver/pages/Welcome.dart';
-import 'pages/Homepage.dart'; // Import your newly created file
-import 'pages/Signup.dart';
 import 'dart:io';
+import 'pages/Welcome.dart';
 
 void main() {
   runApp(MyApp());
