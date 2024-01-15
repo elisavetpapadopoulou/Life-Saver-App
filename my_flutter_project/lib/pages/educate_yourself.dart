@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:lifesaver/api_service.dart';
 import '../globals.dart';
 import 'read_articles.dart';
+import 'Homepage.dart';
 
 class EducateYourselfScreen extends StatefulWidget {
   @override
@@ -38,14 +39,28 @@ class _EducateYourselfScreenState extends State<EducateYourselfScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Educate Yourself'),
-        backgroundColor: const Color.fromARGB(255, 255, 182, 206),
-      ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const HomepageScreen()),
+            ),
+          ),
+          title: Text('Educate Yourself'),
+          backgroundColor: const Color.fromARGB(255, 255, 182, 206),
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const HomepageScreen()),
+              ),
+            )
+          ]),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-                        // Welcoming Text
+            // Welcoming Text
             Text(
               'Welcome to the Educate Yourself Section!',
               style: TextStyle(
@@ -86,11 +101,13 @@ class _EducateYourselfScreenState extends State<EducateYourselfScreen> {
 
             // Buttons to Navigate to Articles
             ElevatedButton(
+              //backgroundcolor: Color.fromARGB(255, 255, 182, 206)
               onPressed: () {
                 // Navigate to all articles
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => AllArticlesScreen(apiService: _apiService),
+                    builder: (context) =>
+                        AllArticlesScreen(apiService: _apiService),
                   ),
                 );
               },
@@ -101,7 +118,8 @@ class _EducateYourselfScreenState extends State<EducateYourselfScreen> {
                 // Navigate to articles the user has already read
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ReadArticlesScreen(apiService: _apiService),
+                    builder: (context) =>
+                        ReadArticlesScreen(apiService: _apiService),
                   ),
                 );
               },
@@ -115,7 +133,8 @@ class _EducateYourselfScreenState extends State<EducateYourselfScreen> {
 }
 
 class TrophyHolder extends StatelessWidget {
-  final String badge; // User's badge, e.g., 'Gold', 'Silver', 'Bronze', or 'No Badge'
+  final String
+      badge; // User's badge, e.g., 'Gold', 'Silver', 'Bronze', or 'No Badge'
 
   TrophyHolder({required this.badge});
 
@@ -127,19 +146,25 @@ class TrophyHolder extends StatelessWidget {
         // Gold Trophy
         Icon(
           Icons.emoji_events,
-          color: badge == 'Gold' ? Colors.yellow : Colors.grey, // Set color based on badge
+          color: badge == 'Gold'
+              ? Colors.yellow
+              : Colors.grey, // Set color based on badge
           size: 32.0,
         ),
         // Silver Trophy
         Icon(
           Icons.emoji_events,
-          color: badge == 'Silver' ? Colors.blueGrey : Colors.grey, // Set color based on badge
+          color: badge == 'Silver'
+              ? Colors.blueGrey
+              : Colors.grey, // Set color based on badge
           size: 32.0,
         ),
         // Bronze Trophy
         Icon(
           Icons.emoji_events,
-          color: badge == 'Bronze' ? Colors.brown : Colors.grey, // Set color based on badge
+          color: badge == 'Bronze'
+              ? Colors.brown
+              : Colors.grey, // Set color based on badge
           size: 32.0,
         ),
       ],
