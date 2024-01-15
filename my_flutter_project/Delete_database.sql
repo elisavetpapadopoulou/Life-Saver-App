@@ -1,0 +1,9 @@
+DROP TABLE user_conditions;
+DROP TABLE user_medications;
+DROP TABLE user_allergies;
+DROP TABLE read_articles;
+DROP TABLE medical_conditions;
+DROP TABLE medications;
+DROP TABLE allergies;
+DROP TABLE articles;
+DROP TABLE user;
