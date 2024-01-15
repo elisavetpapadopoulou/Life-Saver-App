@@ -47,22 +47,7 @@ class RecoveryPositionPage extends StatelessWidget {
                   fontSize: 16.0,
                 ),
               ),
-              // Add any additional instructions here
-              const Spacer(),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const SignsOfLifePage()),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text('Next'),
-              ),
-            ],
+            ], // Add any additional instructions here
           ),
         ),
       ),

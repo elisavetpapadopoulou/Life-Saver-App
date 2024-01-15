@@ -13,8 +13,11 @@ class AgePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop()),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const NotBreathingPage()),
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 255, 182, 206),
         elevation: 0,
         actions: [

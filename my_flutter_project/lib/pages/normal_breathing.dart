@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lifesaver/pages/responsive.dart';
 import 'Homepage.dart';
-import 'recoveryposition.dart'; 
+import 'recoveryposition.dart';
 import 'assess_breathing.dart';
 import 'signsoflife.dart';
-
 
 class NormalBreathingPage extends StatelessWidget {
   const NormalBreathingPage({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class NormalBreathingPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const AssessBreathingPage()),
+            MaterialPageRoute(builder: (_) => const ResponsivePage()),
           ),
         ),
         backgroundColor: const Color.fromARGB(255, 255, 182, 206),
@@ -28,9 +28,10 @@ class NormalBreathingPage extends StatelessWidget {
             ),
           ),
         ],
+        title: const Text('Normal Breathing'),
       ),
       backgroundColor: const Color.fromARGB(255, 255, 182, 206),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,19 +39,21 @@ class NormalBreathingPage extends StatelessWidget {
             const ListTile(
               leading: Icon(Icons.check_circle_outline),
               title: Text('Confirm Unresponsiveness'),
-              subtitle: Text('Tap or shake them gently and ask loudly, "Are you okay?"'),
+              subtitle: Text(
+                  'Tap or shake them gently and ask loudly, "Are you okay?"'),
             ),
             const ListTile(
               leading: Icon(Icons.phone_android),
               title: Text('Activate Emergency Services'),
-              subtitle: Text('Call emergency services 166, from the icon below. Report that the person is unresponsive and provide details about their breathing status'),
+              subtitle: Text(
+                  'Call emergency services 166, from the icon below. Report that the person is unresponsive and provide details about their breathing status'),
             ),
             const ListTile(
               leading: Icon(Icons.airline_seat_individual_suite),
               title: Text('Place in Recovery Position'),
-              subtitle: Text('If the person is breathing but remains unresponsive, consider placing them in the recovery position. This involves turning them onto their side to help maintain an open airway'),
+              subtitle: Text(
+                  'If the person is breathing but remains unresponsive, consider placing them in the recovery position. This involves turning them onto their side to help maintain an open airway'),
             ),
-            const Spacer(),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (_) => const RecoveryPositionPage()),
@@ -64,19 +67,25 @@ class NormalBreathingPage extends StatelessWidget {
               ),
               child: const Text('Press for instructions'),
             ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const SignsOfLifePage()),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: const Text('Next'),
+            const ListTile(
+              leading: Icon(Icons.medical_services),
+              title: Text('Check for Signs of Life'),
+              subtitle: Text(
+                  'While waiting for emergency services, check for any signs of life. Look for movement, breathing, or any other indications of consciousness or responsiveness'),
             ),
+            const ListTile(
+              leading: Icon(Icons.info),
+              title: Text('Monitor Vital Signs'),
+              subtitle: Text(
+                'Continue to monitor the person\'s breathing and other vital signs. Be prepared to provide updated information to emergency services',
+              ),
+            ),
+            const ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Stay with the Person'),
+                subtitle: Text(
+                  'Stay with the person and provide comfort. Continue to reassure them while waiting for professional help to arrive.',
+                )),
           ],
         ),
       ),
