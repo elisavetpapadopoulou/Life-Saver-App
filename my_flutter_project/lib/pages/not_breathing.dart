@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lifesaver/pages/assess_breathing.dart';
+import 'package:lifesaver/pages/responsive.dart';
 import 'Homepage.dart';
 import 'age.dart';
 import 'rescue_breath.dart';
@@ -15,7 +16,7 @@ class NotBreathingPage extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const AssessBreathingPage()),
+              MaterialPageRoute(builder: (_) => const ResponsivePage()),
             ),
           ),
           backgroundColor: const Color.fromARGB(255, 255, 182, 206),
